@@ -36,18 +36,22 @@ class GooglePlayDataSource implements IStoreDataSource {
   }
 
   @override
-  Future<void> update() async {
+  Future<bool> update() async {
     try {
       final appUpdateResult = await InAppUpdate.startFlexibleUpdate();
       //Perform flexible update
       if (appUpdateResult == AppUpdateResult.success) {
         //App Update successful
         await InAppUpdate.completeFlexibleUpdate();
+        return true;
       }
+      return false;
     } on MissingPluginException catch (_) {
       debugPrint('[🔄 Update: update] Installed not from Google Play');
+      return false;
     } catch (e) {
       debugPrint('[🔄 Update: update] err: ${e.toString()}');
+      return false;
     }
   }
 }

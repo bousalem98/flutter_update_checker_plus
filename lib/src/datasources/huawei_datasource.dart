@@ -120,16 +120,18 @@ class HuaweiDataSource extends IStoreDataSource {
   }
 
   @override
-  Future<void> update() async {
+  Future<bool> update() async {
     try {
       final isSuccess = await launchUrlString(
         StoreUrls.androidAppGalleryUpdateUrl(appId),
         mode: LaunchMode.externalNonBrowserApplication,
       );
-      if (isSuccess) return;
+      if (isSuccess) return isSuccess;
       await launchUrlString(StoreUrls.androidAppGalleryUpdateUrl(appId));
+      return true;
     } catch (e) {
       debugPrint('[🔄 Update: update] err: $e');
+      return false;
     }
   }
 

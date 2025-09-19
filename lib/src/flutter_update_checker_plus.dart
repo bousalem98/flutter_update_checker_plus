@@ -109,20 +109,21 @@ class UpdateStoreChecker {
   /// This method redirects the user to the store page of the app for updating.
   ///
   /// [store] - Optional, specify the store type. If null, it will auto-detect.
-  Future<void> update({StoreType? store}) async {
+  Future<bool> update({StoreType? store}) async {
     try {
       // Determine the store type
       final type = store ?? await getStoreType();
-      if (type == null) return;
+      if (type == null) return false;
 
       // Get the data source for the store type
       final source = await _getStoreDataSource(type);
-      if (source == null) return;
+      if (source == null) return false;
 
       // Redirect to the update page in the store
       return source.update();
     } on Exception catch (e) {
       debugPrint('[🔄 Update: update] err: $e');
+      return false;
     }
   }
 

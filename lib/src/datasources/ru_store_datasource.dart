@@ -32,16 +32,18 @@ class RuStoreDataSource extends IStoreDataSource {
   }
 
   @override
-  Future<void> update() async {
+  Future<bool> update() async {
     try {
       final isSuccess = await launchUrlString(
         StoreUrls.androidRuStoreUpdateUrl(packageName),
         mode: LaunchMode.externalNonBrowserApplication,
       );
-      if (isSuccess) return;
+      if (isSuccess) return isSuccess;
       await launchUrlString(StoreUrls.androidRuStoreUpdateUrl(packageName));
+      return true;
     } catch (e) {
       debugPrint('[🔄 Update: update] err: $e');
+      return false;
     }
   }
 
