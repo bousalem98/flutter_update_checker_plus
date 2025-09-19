@@ -111,10 +111,18 @@ void checkForUpdates() async {
 
 ```
 
-## Contributing
+## 👥 Contributors
 
-[Feedback](https://github.com/adictgroup/flutter_update_checker_plus/issues) and [Pull Requests](https://github.com/adictgroup/flutter_update_checker_plus/pulls) are most welcome!
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/bousalem98"><img src="https://avatars.githubusercontent.com/u/61710794?v=4" width="100px;" alt=""/><br /><sub><b>Mohamed Salem</b></sub></a></td>
+    <td align="center"><a href="https://github.com/adictgroup"><img src="https://avatars.githubusercontent.com/u/25362515?v=4" width="100px;" alt=""/><br /><sub><b>ADICT Group</b></sub></a></td>
+  </tr>
+</table>
+<br/>
+
+[Feedback](https://github.com/bousalem98/flutter_update_checker_plus/issues) and [Pull Requests](https://github.com/bousalem98/flutter_update_checker_plus/pulls) are most welcome!
 
 ## License
 
-This package is licensed under the [MIT License](https://github.com/adictgroup/flutter_update_checker_plus/LICENSE)
+This package is licensed under the [MIT License](https://github.com/bousalem98/flutter_update_checker_plus/LICENSE)
