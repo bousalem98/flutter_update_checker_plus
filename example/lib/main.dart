@@ -28,6 +28,7 @@ class _MainAppState extends State<MainApp> {
       androidAppGalleryPackageName: 'com.vkontakte.android',
       androidRuStorePackage: 'com.vkontakte.android',
       androidGooglePlayPackage: 'com.vkontakte.android',
+      forceNoCache: true,
     );
 
     final updateSource = await checker.getStoreType();

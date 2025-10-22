@@ -1,4 +1,4 @@
-## 0.0.4
+## 0.0.5
 
 - Fixed an issue where the fetched App Store version (especially on iOS and some Android stores) could be outdated due to CDN caching.
 - Added `forceNoCache` parameter to allow forcing a fresh version check by bypassing store-side caching mechanisms.

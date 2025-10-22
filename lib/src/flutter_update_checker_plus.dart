@@ -42,6 +42,7 @@ class UpdateStoreChecker {
   String? _androidAppGalleryId;
   String? _androidAppGalleryPackageName;
   String? _androidRuStorePackage;
+  bool _forceNoCache = false;
 
   /// Constructor for UpdateStoreChecker
   ///
@@ -76,6 +77,7 @@ class UpdateStoreChecker {
     _androidAppGalleryId = androidAppGalleryId;
     _androidAppGalleryPackageName = androidAppGalleryPackageName;
     _androidRuStorePackage = androidRuStorePackage;
+    _forceNoCache = forceNoCache;
   }
 
   /// Checks if an update is available for the app in the store.
@@ -230,7 +232,7 @@ class UpdateStoreChecker {
   }) async {
     try {
       return await store.needUpdate(
-          storeVersion: storeVersion, forceNoCache: true);
+          storeVersion: storeVersion, forceNoCache: _forceNoCache);
     } on Exception catch (e) {
       debugPrint('[🔄 Update: _checkUpdateStore] err: $e');
       return false;
@@ -244,7 +246,7 @@ class UpdateStoreChecker {
   /// Returns the store version as a string.
   Future<String> _getStoreVersion(IStoreDataSource store) async {
     try {
-      return await store.getStoreVersion(forceNoCache: true);
+      return await store.getStoreVersion(forceNoCache: _forceNoCache);
     } on Exception catch (e) {
       debugPrint('[🔄 Update: _getStoreVersion] err: $e');
       return '0.0.0';
@@ -265,7 +267,7 @@ class UpdateStoreChecker {
         return {'update': false, 'version': null, 'current': null};
       }
 
-      return await source.getStoreAndLocalVersions(forceNoCache: true);
+      return await source.getStoreAndLocalVersions(forceNoCache: _forceNoCache);
     } on Exception catch (e) {
       debugPrint('[🔄 Update: _checkUpdateStore] err: $e');
       return {'update': false, 'version': null, 'current': null};

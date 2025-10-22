@@ -76,6 +76,12 @@ version: 1.2.3+XXXXXX
 
 Refer to the example provided in the [`/example`](./example) folder for detailed usage.
 
+Starting from **v0.0.5**, the package introduces the new `forceNoCache` parameter for more reliable version checks.
+
+Some app stores (such as the Apple App Store, Huawei AppGallery, or RuStore) may occasionally return outdated version data due to CDN caching.  
+By setting `forceNoCache: true` when creating your `UpdateStoreChecker`, you can force the package to bypass these caches and always fetch the latest available version.
+By default, this parameter `forceNoCache` is set to **false** to avoid unnecessary network requests.
+
 Here's a simple example of how to check for updates:
 
 ```dart
@@ -87,6 +93,7 @@ final updateChecker = UpdateStoreChecker(
       androidAppGalleryPackageName: 'com.vkontakte.android',
       androidRuStorePackage: 'com.vkontakte.android',
       androidGooglePlayPackage: 'com.vkontakte.android',
+      forceNoCache: true, // 🔄 ensures always-fresh store data
     );
 
 void checkForUpdates() async {
