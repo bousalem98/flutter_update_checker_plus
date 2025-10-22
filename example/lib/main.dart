@@ -29,6 +29,7 @@ class _MainAppState extends State<MainApp> {
       androidRuStorePackage: 'com.vkontakte.android',
       androidGooglePlayPackage: 'com.vkontakte.android',
     );
+
     final updateSource = await checker.getStoreType();
 
     updateInfo.addEntries(StoreType.values
@@ -45,9 +46,15 @@ class _MainAppState extends State<MainApp> {
     for (final MapEntry(:key) in updateInfo.entries) {
       final version = await checker.getStoreVersion(store: key);
       updateInfo[key] = version;
+      final updateCheckerInfo =
+          await checker.getStoreAndLocalVersions(store: StoreType.APP_STORE);
+      debugPrint("[🔄 Update Info] $updateCheckerInfo");
     }
 
     setState(() {});
+    final updateCheckerInfo =
+        await checker.getStoreAndLocalVersions(store: StoreType.APP_STORE);
+    debugPrint("[🔄 Update Info] $updateCheckerInfo");
   }
 
   @override

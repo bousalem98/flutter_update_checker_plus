@@ -36,6 +36,30 @@ class GooglePlayDataSource implements IStoreDataSource {
   }
 
   @override
+  Future<Map<String, Object?>> getStoreAndLocalVersions(
+      {String? storeVersion}) async {
+    try {
+      final info = await InAppUpdate.checkForUpdate();
+      if (info.updateAvailability != UpdateAvailability.updateAvailable) {
+        return {'update': false, 'version': null, 'current': null};
+      }
+      if (!info.flexibleUpdateAllowed) {
+        return {'update': false, 'version': null, 'current': null};
+      }
+
+      return info.updateAvailability == UpdateAvailability.updateAvailable
+          ? {'update': true, 'version': null, 'current': null}
+          : {'update': false, 'version': null, 'current': null};
+    } on MissingPluginException catch (_) {
+      debugPrint('[🔄 Update] Installed not from Google Play');
+      return {'update': false, 'version': null, 'current': null};
+    } on Exception catch (e) {
+      debugPrint('[🔄 Update: needUpdate] err: ${e.toString()}');
+      return {'update': false, 'version': null, 'current': null};
+    }
+  }
+
+  @override
   Future<bool> update() async {
     try {
       final appUpdateResult = await InAppUpdate.startFlexibleUpdate();

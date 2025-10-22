@@ -247,4 +247,25 @@ class UpdateStoreChecker {
       return '0.0.0';
     }
   }
+
+  Future<Map<String, Object?>> getStoreAndLocalVersions(
+      {StoreType? store, String? storeVersion}) async {
+    try {
+      final type = store ?? await getStoreType();
+      if (type == null) {
+        return {'update': false, 'version': null, 'current': null};
+      }
+
+      // Get the data source for the store type
+      final source = await _getStoreDataSource(type);
+      if (source == null) {
+        return {'update': false, 'version': null, 'current': null};
+      }
+
+      return await source.getStoreAndLocalVersions(storeVersion: storeVersion);
+    } on Exception catch (e) {
+      debugPrint('[🔄 Update: _checkUpdateStore] err: $e');
+      return {'update': false, 'version': null, 'current': null};
+    }
+  }
 }

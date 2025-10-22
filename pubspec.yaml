@@ -1,6 +1,6 @@
 name: flutter_update_checker_plus
 description: Based on flutter_update_checker to check update for Android (Google Play, App Gallery, RuStore) and iOS (AppStore)
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/bousalem98/flutter_update_checker_plus
 repository: https://github.com/bousalem98/flutter_update_checker_plus
 issue_tracker: https://github.com/bousalem98/flutter_update_checker_plus/issues

@@ -61,4 +61,20 @@ class RuStoreDataSource extends IStoreDataSource {
       return false;
     }
   }
+
+  @override
+  Future<Map<String, Object?>> getStoreAndLocalVersions(
+      {String? storeVersion}) async {
+    try {
+      final version = storeVersion ?? await getStoreVersion();
+      final nowVersion = (await PackageInfo.fromPlatform()).version;
+      if (!UtilsUpdate.isNew(version, nowVersion) || version == '0.0.0') {
+        return {'update': false, 'version': version, 'current': nowVersion};
+      }
+      return {'update': true, 'version': version, 'current': nowVersion};
+    } on Exception catch (e) {
+      debugPrint('[🔄 Update: needUpdate] err: $e');
+      return {'update': false, 'version': null, 'current': null};
+    }
+  }
 }

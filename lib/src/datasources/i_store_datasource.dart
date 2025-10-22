@@ -2,4 +2,5 @@ abstract class IStoreDataSource {
   Future<String> getStoreVersion();
   Future<bool> needUpdate({String? storeVersion});
   Future<bool> update();
+  Future<Map<String, Object?>> getStoreAndLocalVersions({String? storeVersion});
 }
