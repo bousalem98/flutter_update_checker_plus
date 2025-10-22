@@ -53,6 +53,7 @@ class UpdateStoreChecker {
   /// [androidAppGalleryId] - ID of the app in Huawei AppGallery. // https://appgallery.huawei.ru/app/CXXXXXXXXX
   /// [androidAppGalleryPackageName] - Package name in Huawei AppGallery.
   /// [androidRuStorePackage] - Package name in RuStore.
+  /// [forceNoCache] - If true, forces no caching when checking for updates.
   ///
   UpdateStoreChecker({
     int? iosAppStoreId,
@@ -62,6 +63,7 @@ class UpdateStoreChecker {
     String? androidAppGalleryId,
     String? androidAppGalleryPackageName,
     String? androidRuStorePackage,
+    bool forceNoCache = false,
   }) : assert(
           (androidAppGalleryId == null &&
                   androidAppGalleryPackageName == null) ||
@@ -227,7 +229,8 @@ class UpdateStoreChecker {
     String? storeVersion,
   }) async {
     try {
-      return await store.needUpdate(storeVersion: storeVersion);
+      return await store.needUpdate(
+          storeVersion: storeVersion, forceNoCache: true);
     } on Exception catch (e) {
       debugPrint('[🔄 Update: _checkUpdateStore] err: $e');
       return false;
@@ -241,7 +244,7 @@ class UpdateStoreChecker {
   /// Returns the store version as a string.
   Future<String> _getStoreVersion(IStoreDataSource store) async {
     try {
-      return await store.getStoreVersion();
+      return await store.getStoreVersion(forceNoCache: true);
     } on Exception catch (e) {
       debugPrint('[🔄 Update: _getStoreVersion] err: $e');
       return '0.0.0';
@@ -249,7 +252,7 @@ class UpdateStoreChecker {
   }
 
   Future<Map<String, Object?>> getStoreAndLocalVersions(
-      {StoreType? store, String? storeVersion}) async {
+      {StoreType? store}) async {
     try {
       final type = store ?? await getStoreType();
       if (type == null) {
@@ -262,7 +265,7 @@ class UpdateStoreChecker {
         return {'update': false, 'version': null, 'current': null};
       }
 
-      return await source.getStoreAndLocalVersions(storeVersion: storeVersion);
+      return await source.getStoreAndLocalVersions(forceNoCache: true);
     } on Exception catch (e) {
       debugPrint('[🔄 Update: _checkUpdateStore] err: $e');
       return {'update': false, 'version': null, 'current': null};

@@ -5,7 +5,7 @@ import 'i_store_datasource.dart';
 
 class GooglePlayDataSource implements IStoreDataSource {
   @override
-  Future<String> getStoreVersion() async {
+  Future<String> getStoreVersion({required bool forceNoCache}) async {
     try {
       final info = await InAppUpdate.checkForUpdate();
       return '${info.availableVersionCode}';
@@ -18,7 +18,8 @@ class GooglePlayDataSource implements IStoreDataSource {
   }
 
   @override
-  Future<bool> needUpdate({String? storeVersion}) async {
+  Future<bool> needUpdate(
+      {required bool forceNoCache, String? storeVersion}) async {
     try {
       final info = await InAppUpdate.checkForUpdate();
       if (info.updateAvailability != UpdateAvailability.updateAvailable) {
@@ -37,7 +38,7 @@ class GooglePlayDataSource implements IStoreDataSource {
 
   @override
   Future<Map<String, Object?>> getStoreAndLocalVersions(
-      {String? storeVersion}) async {
+      {required bool forceNoCache}) async {
     try {
       final info = await InAppUpdate.checkForUpdate();
       if (info.updateAvailability != UpdateAvailability.updateAvailable) {

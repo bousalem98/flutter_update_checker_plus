@@ -16,12 +16,29 @@ class AppStoreDataSource extends IStoreDataSource {
   AppStoreDataSource({required this.appId, this.country = 'US'});
 
   @override
-  Future<String> getStoreVersion() async {
+  Future<String> getStoreVersion({required bool forceNoCache}) async {
     try {
-      final url = StoreUrls.iosAppStore(appId, country: country);
-      final response = await Dio().get(url).timeout(
-            const Duration(seconds: 10),
-          );
+      var url = StoreUrls.iosAppStore(appId, country: country);
+
+      // 👇 If forceNoCache is true, append timestamp to avoid CDN cache
+      if (forceNoCache) {
+        url += '&t=${DateTime.now().millisecondsSinceEpoch}';
+      }
+
+      final response = await Dio()
+          .get(
+            url,
+            options: Options(
+              headers: forceNoCache
+                  ? {
+                      'Cache-Control': 'no-cache, no-store, must-revalidate',
+                      'Pragma': 'no-cache',
+                      'Expires': '0',
+                    }
+                  : null,
+            ),
+          )
+          .timeout(const Duration(seconds: 10));
       if (response.data.isEmpty) return '0.0.0';
 
       final decodedResults = json.decode(response.data);
@@ -51,9 +68,11 @@ class AppStoreDataSource extends IStoreDataSource {
   }
 
   @override
-  Future<bool> needUpdate({String? storeVersion}) async {
+  Future<bool> needUpdate(
+      {required bool forceNoCache, String? storeVersion}) async {
     try {
-      final version = storeVersion ?? await getStoreVersion();
+      final version =
+          storeVersion ?? await getStoreVersion(forceNoCache: forceNoCache);
       final nowVersion = (await PackageInfo.fromPlatform()).version;
       if (!UtilsUpdate.isNew(version, nowVersion) || version == '0.0.0') {
         return false;
@@ -67,9 +86,9 @@ class AppStoreDataSource extends IStoreDataSource {
 
   @override
   Future<Map<String, Object?>> getStoreAndLocalVersions(
-      {String? storeVersion}) async {
+      {required bool forceNoCache}) async {
     try {
-      final version = storeVersion ?? await getStoreVersion();
+      final version = await getStoreVersion(forceNoCache: forceNoCache);
       final nowVersion = (await PackageInfo.fromPlatform()).version;
       if (!UtilsUpdate.isNew(version, nowVersion) || version == '0.0.0') {
         return {'update': false, 'version': version, 'current': nowVersion};

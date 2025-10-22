@@ -13,12 +13,28 @@ class RuStoreDataSource extends IStoreDataSource {
   RuStoreDataSource({required this.packageName});
 
   @override
-  Future<String> getStoreVersion() async {
+  Future<String> getStoreVersion({required bool forceNoCache}) async {
     try {
-      final url = StoreUrls.androidRuStore(packageName);
-      final response = await Dio().get(url).timeout(
-            const Duration(seconds: 10),
-          );
+      var url = StoreUrls.androidRuStore(packageName);
+      if (forceNoCache) {
+        url += '?t=${DateTime.now().millisecondsSinceEpoch}';
+      }
+
+      final response = await Dio()
+          .request(
+            url,
+            options: Options(
+              method: 'POST',
+              headers: forceNoCache
+                  ? {
+                      'Cache-Control': 'no-cache, no-store, must-revalidate',
+                      'Pragma': 'no-cache',
+                      'Expires': '0',
+                    }
+                  : null,
+            ),
+          )
+          .timeout(const Duration(seconds: 10));
 
       if (response.data.isEmpty) return '0.0.0';
 
@@ -48,9 +64,11 @@ class RuStoreDataSource extends IStoreDataSource {
   }
 
   @override
-  Future<bool> needUpdate({String? storeVersion}) async {
+  Future<bool> needUpdate(
+      {required bool forceNoCache, String? storeVersion}) async {
     try {
-      final version = storeVersion ?? await getStoreVersion();
+      final version =
+          storeVersion ?? await getStoreVersion(forceNoCache: forceNoCache);
       final nowVersion = (await PackageInfo.fromPlatform()).version;
       if (!UtilsUpdate.isNew(version, nowVersion) || version == '0.0.0') {
         return false;
@@ -64,9 +82,9 @@ class RuStoreDataSource extends IStoreDataSource {
 
   @override
   Future<Map<String, Object?>> getStoreAndLocalVersions(
-      {String? storeVersion}) async {
+      {required bool forceNoCache}) async {
     try {
-      final version = storeVersion ?? await getStoreVersion();
+      final version = await getStoreVersion(forceNoCache: forceNoCache);
       final nowVersion = (await PackageInfo.fromPlatform()).version;
       if (!UtilsUpdate.isNew(version, nowVersion) || version == '0.0.0') {
         return {'update': false, 'version': version, 'current': nowVersion};

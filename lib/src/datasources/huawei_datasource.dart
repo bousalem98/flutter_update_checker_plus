@@ -85,22 +85,28 @@ class HuaweiDataSource extends IStoreDataSource {
   }
 
   @override
-  Future<String> getStoreVersion() async {
+  Future<String> getStoreVersion({required bool forceNoCache}) async {
     try {
       const url =
           'https://store-dre.hispace.dbankcloud.com/hwmarket/api/clientApi';
+
       final response = await Dio()
           .request(
             url,
             options: Options(
               method: 'POST',
-              headers: _headers,
+              headers: forceNoCache
+                  ? {
+                      ..._headers,
+                      'Cache-Control': 'no-cache, no-store, must-revalidate',
+                      'Pragma': 'no-cache',
+                      'Expires': '0',
+                    }
+                  : _headers,
             ),
             data: _buildData(),
           )
-          .timeout(
-            const Duration(seconds: 10),
-          );
+          .timeout(const Duration(seconds: 10));
       if (response.data.isEmpty) return '0.0.0';
 
       final decodedResults = response.data;
@@ -136,9 +142,11 @@ class HuaweiDataSource extends IStoreDataSource {
   }
 
   @override
-  Future<bool> needUpdate({String? storeVersion}) async {
+  Future<bool> needUpdate(
+      {required bool forceNoCache, String? storeVersion}) async {
     try {
-      final version = storeVersion ?? await getStoreVersion();
+      final version =
+          storeVersion ?? await getStoreVersion(forceNoCache: forceNoCache);
       final nowVersion = (await PackageInfo.fromPlatform()).version;
       if (!UtilsUpdate.isNew(version, nowVersion) || version == '0.0.0') {
         return false;
@@ -152,9 +160,9 @@ class HuaweiDataSource extends IStoreDataSource {
 
   @override
   Future<Map<String, Object?>> getStoreAndLocalVersions(
-      {String? storeVersion}) async {
+      {required bool forceNoCache}) async {
     try {
-      final version = storeVersion ?? await getStoreVersion();
+      final version = await getStoreVersion(forceNoCache: forceNoCache);
       final nowVersion = (await PackageInfo.fromPlatform()).version;
       if (!UtilsUpdate.isNew(version, nowVersion) || version == '0.0.0') {
         return {'update': false, 'version': version, 'current': nowVersion};
