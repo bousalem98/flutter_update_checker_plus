@@ -1,3 +1,7 @@
+## 0.0.6
+
+- add new method to return current installed version.
+
 ## 0.0.5
 
 - Fixed an issue where the fetched App Store version (especially on iOS and some Android stores) could be outdated due to CDN caching.

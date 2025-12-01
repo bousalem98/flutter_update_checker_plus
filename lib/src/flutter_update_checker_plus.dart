@@ -131,6 +131,16 @@ class UpdateStoreChecker {
     }
   }
 
+  /// return the current installed version of the app
+  Future<String> getInstalledVersion() async {
+    try {
+      return await PackageInfo.fromPlatform().then((info) => info.version);
+    } on Exception catch (e) {
+      debugPrint('[🔄 Update: getInstalledVersion] err: $e');
+      return '0.0.0';
+    }
+  }
+
   /// Retrieves the current version of the app in the store.
   ///
   /// This method fetches the version of the app from the respective app store.
