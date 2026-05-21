@@ -1,3 +1,7 @@
+## 0.0.7
+
+- update package_info_plus to ^10.1.0
+
 ## 0.0.6
 
 - add new method to return current installed version.
